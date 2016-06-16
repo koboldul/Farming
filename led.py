@@ -33,15 +33,13 @@ valveTime = 5000
 def startDevice(pin):
 	global pump
 	global valve
-	p = 0
+	p = pin
 	if pin == 'v':
 		p = valve
 	if pin == 'p':
 		p = pump
-	if p == 0:
-		p = pin
-	print 'f - starting', p
-
+	logger.info('Starting device ' + str(p))
+	print 'wtf', str(p)
 	GPIO.setup(p,GPIO.OUT)
 	GPIO.output(p, GPIO.LOW)
 	
@@ -50,15 +48,22 @@ def startDevice(pin):
 
 def checkIrrigation(pin):
 	global valve
-	return pin == 'v' or int(pin) == valve
+	try:
+		return pin == 'v' or int(pin) == valve
+	except:
+		return False
+
+def stopDevice(pin):
+	logger.info("Stopping device " + str(pin))
+	GPIO.output(pin, GPIO.HIGH)
+	logger.info("Stoping device " + str(pin))
 
 if len(sys.argv) == 0:
 	print 'Daemon mode'
-	
-
-
-	while True:
-		#nothing
+	#scheduler = BackgroundScheduler()
+	#scheduler.add_job(startDevice(pump)
+	while(True):
+		i = 0
 
 hasIrrigation = False
 
@@ -77,9 +82,10 @@ else:
 				print 'Has irrigation'
 			print 'Started', str(sys.argv[i])
 		if hasIrrigation == True:
-			time.sleep(slT)
+			time.sleep(valveTime)
 			print 'Done with the irrigation'
 			GPIO.setup(valve, GPIO.HIGH)
-	except:
+	except Exception as e:
+		print e
 		print 'cleaning on error'
 		GPIO.cleanup()

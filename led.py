@@ -14,12 +14,21 @@ LOG_FILE ='farming.log'
 
 GPIO.setmode(GPIO.BCM)
 
-logger = logging.
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+handler = logging.handlers.TimedRotatingFileHandler(LOG_FILE, when="midnight", backupCount=3)
+# Format each log message like this
+formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
+# Attach the formatter to the handler
+handler.setFormatter(formatter)
+# Attach the handler to the logger
+logger.addHandler(handler)
 
 pump = 17
 valve = 4
 
-lT = 3600
+pumpTime = 24000
+valveTime = 5000
 
 def startDevice(pin):
 	global pump
@@ -38,9 +47,18 @@ def startDevice(pin):
 	
 	print pin
 	return
+
 def checkIrrigation(pin):
 	global valve
 	return pin == 'v' or int(pin) == valve
+
+if len(sys.argv) == 0:
+	print 'Daemon mode'
+	
+
+
+	while True:
+		#nothing
 
 hasIrrigation = False
 
@@ -64,4 +82,4 @@ else:
 			GPIO.setup(valve, GPIO.HIGH)
 	except:
 		print 'cleaning on error'
-		kGPIO.cleanup()
+		GPIO.cleanup()

@@ -4,6 +4,7 @@ import logging.handlers
 import time
 import sys
 import apscheduler
+import datetime
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from time import sleep
@@ -27,6 +28,8 @@ logger.addHandler(handler)
 pump = 17
 valve = 4
 
+rainDetectedAt = None
+
 pumpTime = 24000
 valveTime = 5000
 
@@ -39,11 +42,14 @@ def startDevice(pin):
 	if pin == 'p':
 		p = pump
 	logger.info('Starting device ' + str(p))
-	print 'wtf', str(p)
-	GPIO.setup(p,GPIO.OUT)
-	GPIO.output(p, GPIO.LOW)
-	
-	print pin
+	try:
+		GPIO.setup(p,GPIO.OUT)
+		GPIO.output(p, GPIO.LOW)
+		logger.info('Started device ' + str(p))
+	except Exception as e:
+		logger.info('Error starting device ' + str(p) + ' ERROR: ' + str(e))
+		print e
+
 	return
 
 def checkIrrigation(pin):
@@ -56,14 +62,20 @@ def checkIrrigation(pin):
 def stopDevice(pin):
 	logger.info("Stopping device " + str(pin))
 	GPIO.output(pin, GPIO.HIGH)
-	logger.info("Stoping device " + str(pin))
+	logger.info("Stoped device " + str(pin))
 
 if len(sys.argv) == 0:
 	print 'Daemon mode'
-	#scheduler = BackgroundScheduler()
-	#scheduler.add_job(startDevice(pump)
+	scheduler = BackgroundScheduler()
+	scheduler.add_job(lambda: startDevice(pump),'cron', hour='8,22', minute=0)
+	scheduler.add_job(lambda: startDevice(valve),'cron', hour='6,20', minute=0)
+	scheduler.add_job(lambda: stopDevice(pump), 'cron', hour='16,2', minute=0)
+	scheduler.add_job(lambda: stopDevice(valve), 'cron', hour='7,21', minute=0)
+	scheduler.start()
 	while(True):
-		i = 0
+		i = 1
+		if i == 0:
+			rainDetectedAt = datetime.now()
 
 hasIrrigation = False
 
@@ -87,5 +99,6 @@ else:
 			GPIO.setup(valve, GPIO.HIGH)
 	except Exception as e:
 		print e
+		logger.info(e)
 		print 'cleaning on error'
 		GPIO.cleanup()

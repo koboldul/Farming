@@ -14,7 +14,7 @@ LOG_FILE ='farming.log'
 
 GPIO.setmode(GPIO.BCM)
 
-logger = get_logger(LOG_FILE)
+logger = util.get_logger(LOG_FILE)
 
 pump = Device(17, 'pump', logger)
 valve = Device(4, 'irrigation valve', logger)
@@ -32,16 +32,18 @@ devices.append(valve)
 rainDetectedAt = None
 
 #daemon mode
-if len(sys.argv) == 0:
+if len(sys.argv) == 1:
 	print 'Daemon mode'
 	scheduler = BackgroundScheduler()
 	for device in devices:
 		for dTime in device.time_table:
-			scheduler.add_job(lambda: device.start_device(), 'cron', hour=dTime.start_hour, minute=dTime.start_minute)
-			scheduler.add_job(lambda: device.stop_device(), 'cron', hour=dTime.stop_hour, minute=dTime.stop_minute)
+			scheduler.add_job(lambda: device.start_device(), 'cron', hour=dTime.start_hour, minute=dTime.start_minute, misfire_grace_time=None)
+			scheduler.add_job(lambda: device.stop_device(), 'cron', hour=dTime.stop_hour, minute=dTime.stop_minute, misfire_grace_time=None)
 	
 	scheduler.start()
 	while(True):
+		time.sleep(60)
+		logger.info('still..')
 		i = 1
 		if i == 0:
 			rainDetectedAt = datetime.now()

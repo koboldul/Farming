@@ -20,34 +20,38 @@ pump = Device(17, 'pump', logger)
 valve = Device(4, 'irrigation valve', logger)
 sprinkler1 = Device(1, 'sprinkler front house', logger)
 
-pump.add_device_time(8, 0, 16, 0)
-pump.add_device_time(22, 0, 2, 0)
-valve.add_device_time(6, 0, 7, 0)
-valve.add_device_time(20, 0, 21, 0)
-
-devices = []
-devices.append(pump)
-devices.append(valve)
+pump.add_device_time(8,0,16,0)
+pump.add_device_time(22,0,1,0)
+valve.add_device_time(6,0,7 0)
+valve.add_device_time(20,0,21,0)
 
 rainDetectedAt = None
 
+def add_to_scheduler(scheduler, device):
+	for dTime in device.time_table:
+			scheduler.add_job(lambda: device.start_device(), 'cron', hour=dTime.start_hour, minute=dTime.start_minute, misfire_grace_time=None)
+			scheduler.add_job(lambda: device.stop_device(), 'cron', hour=dTime.stop_hour, minute=dTime.stop_minute, misfire_grace_time=None)
+		
 #daemon mode
 if len(sys.argv) == 1:
 	print 'Daemon mode'
 	scheduler = BackgroundScheduler()
-	for device in devices:
-		for dTime in device.time_table:
-			scheduler.add_job(lambda: device.start_device(), 'cron', hour=dTime.start_hour, minute=dTime.start_minute, misfire_grace_time=None)
-			scheduler.add_job(lambda: device.stop_device(), 'cron', hour=dTime.stop_hour, minute=dTime.stop_minute, misfire_grace_time=None)
 	
-	scheduler.start()
-	while(True):
-		time.sleep(60)
-		logger.info('still..')
-		i = 1
-		if i == 0:
-			rainDetectedAt = datetime.now()
+	add_to_scheduler(scheduler, pump)
+	add_to_scheduler(scheduler, valve)
 
+	scheduler.start()
+	try:
+		while(True):
+			time.sleep(3600)
+			logger.info('still awake..')
+			i = 1
+			if i == 0:
+				rainDetectedAt = datetime.now()
+	finally:
+		scheduler.shutdown()
+		print 'stopping all'
+		GPIO.cleanup()
 #command line mode
 valveTime = 5000
 if sys.argv[1] == 's':

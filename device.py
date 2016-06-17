@@ -13,7 +13,13 @@ class Device:
 		self.pin = pin
 		self.name = name
 		self.logger = logger
+		io.setup(self.pin, io.OUT)
+		io.output(self.pin, io.HIGH)
+		print 'Name : ' + self.name + ' ' + str(self.pin)
 		self.time_table = []
+
+	def wtf(self):
+		print self.pin
 
 	def add_device_time(self, start_hour, start_minute, stop_hour, stop_minute):
 			self.time_table.append(DeviceTime(start_hour, start_minute, stop_hour, stop_minute))
@@ -22,7 +28,6 @@ class Device:
 		try:
 			print self.name
 			self.logger.info('Starting device ' + self.name + ' on pin ' + str(self.pin))
-			io.setup(self.pin, io.OUT)
 			io.output(self.pin, io.LOW)
 			self.logger.info('Started ' + self.name + ' on pin ' + str(self.pin))
 		except Exception as e:

@@ -20,10 +20,10 @@ pump = Device(17, 'pump', logger)
 valve = Device(4, 'irrigation valve', logger)
 sprinkler1 = Device(1, 'sprinkler front house', logger)
 
-pump.add_device_time(8,0,16,0)
+pump.add_device_time(10,0,18,0)
 pump.add_device_time(22,0,1,0)
-valve.add_device_time(6,0,7 0)
-valve.add_device_time(20,0,21,0)
+valve.add_device_time(6,30,7,0)
+valve.add_device_time(21,30,22,00)
 
 rainDetectedAt = None
 

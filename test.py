@@ -2,11 +2,11 @@ import smtplib
 
 smtpObj = smtplib.SMTP
 
-passW = 'Malevich1@3$'
-acc = 'koboldul@yahoo.com'
+passW = 'sendSomeMails1'
+acc = 'koboldul@sendgrid.com'
 to = 'koboldul@gmail.com'
-url = 'smtp.mail.yahoo.com'
-port = 587
+url = 'smtp.sendgrid.net'
+port = int(587)
 
 message = """\
         From: %s
@@ -20,7 +20,7 @@ message = """\
 try:
 	smtpObj = smtplib.SMTP(url, port)
 	smtpObj.starttls()
-	smtpObj.login(acc, passW)
+	smtpObj.login('koboldul', passW)
 	smtpObj.sendmail(acc, to, message)         
 	print "Successfully sent email"
 except Exception as e:

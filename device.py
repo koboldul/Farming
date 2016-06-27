@@ -1,5 +1,6 @@
 import RPi.GPIO as io
 import logging 
+from mailer import Mailer
 
 class DeviceTime:
 	def __init__(self, start_hour, start_minute, stop_hour, stop_minute):
@@ -10,6 +11,7 @@ class DeviceTime:
 	
 class Device:
 	def __init__(self, pin, name, logger):
+		self._mailer = Mailer()
 		self.pin = pin
 		self.name = name
 		self.logger = logger
@@ -29,14 +31,20 @@ class Device:
 			io.setup(self.pin, io.OUT)
 			io.output(self.pin, io.LOW)
 			self.logger.info('Started ' + self.name + ' on pin ' + str(self.pin))
+			self._mailer.sendStartStopMessage(True, self.name)
 		except Exception as e:
 			print str(e) 
 			self.logger.info('Erro on ' + self.name + ' on pin ' + str(self.pin) + ' ERROR: ' + str(e))
+			mailer.sendErrorMessage(e)
 			return False
 		
 		return True
 	def stop_device(self):
 		self.logger.info('Stopping device ' + self.name + ' on pin ' + str(self.pin))
+		io.setup(self.pin, io.OUT)
 		io.output(self.pin, io.HIGH)
 		self.logger.info('Stopped device ' + self.name + ' on pin ' + str(self.pin))
+		self._mailer.sendStartStopMessage(False, self.name)
+			
+		
 	

@@ -10,8 +10,9 @@ class DeviceTime:
 		self.stop_minute = stop_minute
 	
 class Device:
-	def __init__(self, pin, name, logger):
+	def __init__(self, pin, name, logger, weather_dependent=False):
 		self._mailer = Mailer()
+		self.weather_dependent = weather_dependent
 		self.pin = pin
 		self.name = name
 		self.logger = logger

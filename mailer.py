@@ -10,33 +10,12 @@ class Mailer:
 		self.url = PrivateData.SMTP_SERVER
 		self.port = int(PrivateData.TLS_PORT)
 
-	def sendStartStopMessage(self, isStart, device):
-		state = 'started' if isStart else 'stopped' 
-		txt = 'Device {0} was {1}'.format(device, state)
-		print txt
-		message = MIMEText(txt)
-		message['Subject']=txt
-		self.sendMail(message)
-
-	def sendErrorMessage(self, error):
-		txt = ' Errro  {0}'.format(str(error))
-		message = MIMEText(txt)
-		message['Subject']='ERROR'
-		self.sendMail(message)
-
-	def sendFullStopMessage(self):
-		txt = 'Shutting down' 
-		message = MIMEText(txt)
-		message['Subject']=txt
-		self.sendMail(message)
-
-	def sendMessage(self, message):
-		txt = message
+	def send_message(self, message, subject):
 		m = MIMEText(message)
-		m['Suject']='FaRM BOT MESSAGE'	
-		self.sendMail(m)
+		m['Suject']= subject	
+		self.send_mail(m)
 
-	def sendMail(self, message):
+	def send_mail(self, message):
 		message['From'] = PrivateData.MAIL_FROM
 		message['To'] = PrivateData.MAIL_TO
 	

@@ -1,6 +1,5 @@
 import RPi.GPIO as io
 import logging 
-from mailer import Mailer
 
 class DeviceTime:
 	def __init__(self, start_hour, start_minute, stop_hour, stop_minute):
@@ -11,41 +10,33 @@ class DeviceTime:
 	
 class Device:
 	def __init__(self, pin, name, logger, weather_dependent=False):
-		self._mailer = Mailer()
 		self.weather_dependent = weather_dependent
 		self.pin = pin
 		self.name = name
 		self.logger = logger
-		print 'Name : ' + self.name + ' ' + str(self.pin)
 		self.time_table = []
-
-	def wtf(self):
-		print self.pin
 
 	def add_device_time(self, start_hour, start_minute, stop_hour, stop_minute):
 			self.time_table.append(DeviceTime(start_hour, start_minute, stop_hour, stop_minute))
 	
 	def start_device(self):
 		try:
-			print self.name
-			self.logger.info('Starting device ' + self.name + ' on pin ' + str(self.pin))
+			self.logger.log('Starting device ' + self.name + ' on pin ' + str(self.pin))
 			io.setup(self.pin, io.OUT)
 			io.output(self.pin, io.LOW)
-			self.logger.info('Started ' + self.name + ' on pin ' + str(self.pin))
-			self._mailer.sendStartStopMessage(True, self.name)
+			self.logger.notify('Started ' + self.name + ' on pin ' + str(self.pin), 'Device {0} started'.format(self.name))
 		except Exception as e:
-			print str(e) 
-			self.logger.info('Erro on ' + self.name + ' on pin ' + str(self.pin) + ' ERROR: ' + str(e))
-			mailer.sendErrorMessage(e)
+			self.logger.notify('Error on starting ' + self.name + ' on pin ' + str(self.pin) + ' ERROR: ' + str(e), \
+                'Error')
 			return False
 		
 		return True
 	def stop_device(self):
-		self.logger.info('Stopping device ' + self.name + ' on pin ' + str(self.pin))
+		self.logger.log('Stopping device ' + self.name + ' on pin ' + str(self.pin))
 		io.setup(self.pin, io.OUT)
 		io.output(self.pin, io.HIGH)
-		self.logger.info('Stopped device ' + self.name + ' on pin ' + str(self.pin))
-		self._mailer.sendStartStopMessage(False, self.name)
+		self.logger.notify('Stopped device ' + self.name + ' on pin ' + str(self.pin), 'Device {0} stopped'.format(self.name))
+		
 			
 		
 	

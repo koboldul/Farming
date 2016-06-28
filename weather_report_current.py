@@ -16,7 +16,7 @@ class WeatherReportCurrent(WeatherReportBase):
 
 	def handle_query(self, time):
 		resp = WateringResponse()
-		self.logger.info("Checking current weather")
+		self.logger.log("Checking current weather")
         	try:
 			response = requests.get(self.url)
 			w_data = response.json()
@@ -28,9 +28,9 @@ class WeatherReportCurrent(WeatherReportBase):
 			if weather_code <= WeatherReportBase.RAIN_CODES[1] and \
 					weather_code >= WeatherReportBase.RAIN_CODES[0] and \
 					float(rain_volume) > float(PrivateData.RAIN_TRASHOLD):
-				resp.should_water = False
-				self.logger.info('Skip watering because of the rain. Raining right now.')
-				resp.should_water = False
+				resp.rainedAt = datetime.datetime.now()
+                        resp.should_water = False
+				self.logger.log('Skip watering because of the rain. Raining right now.')
 		except Exception as e:
-			self.logger.info('Will water because of error: {0}'.format(str(e)))
+			self.logger.log('Will water because of error: {0}'.format(str(e)))
 		return resp

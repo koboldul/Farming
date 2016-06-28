@@ -2,6 +2,7 @@ import json
 import requests
 import datetime
 import abc
+from watering_response import WateringResponse
 
 class WeatherReportBase(object):
     __metaclass__ = abc.ABCMeta
@@ -14,14 +15,14 @@ class WeatherReportBase(object):
         self.successor = successor
         self.logger = logger
 
-    def get_watering_response(self, time):
+    def get_watering_response(self, input):
+        resp = WateringResponse()
         if (self.can_handle):
-            print 'will handle'
-            return self.handle_query(time)
+            resp = self.handle_query(time)
+        if resp.should_water and self.successor is not None:
+            return self.successor.get_watering_response(input)
         else:
-            if self.successor is not None:
-                return self.successor.get_watering_response(time)
-        return None        
+            return resp        
 
     @abc.abstractmethod
     def handle_query(self, time):

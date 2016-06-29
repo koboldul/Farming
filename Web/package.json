@@ -1,0 +1,25 @@
+{
+  "name": "farm",
+  "version": "0.0.0",
+  "description": "farming ui",
+  "main": "app.js",
+  "scripts": {
+    "build-css": "stylus stylesheets/index.styl -o static/css",
+    "watch-css": "stylus stylesheets/index.styl -o static/css -w",
+    "clean": "rm -rf static/css && mkdir -p static/css",
+    "build": "npm run clean && npm run build-css",
+    "watch": "npm run clean && npm run watch-css & nodemon  app  -e js,jade",
+    "start": "node app"
+  },
+  "keywords": [
+    "frm"
+  ],
+  "author": "Bogdan Costea",
+  "license": "moroii",
+  "dependencies": {
+    "jade": "^1.11.0",
+    "morgan": "^1.7.0",
+    "pug": "^2.0.0-beta3",
+    "stylus": "^0.54.5"
+  }
+}

@@ -1,0 +1,15 @@
+extend default
+
+block content
+	button(class="btn", data-action="bea", onClick="viewLogs()").
+		View Logs
+	button(class="btn", data-action="bea", onClick="toggleDevice('v', true)").
+		Start Valve
+	button(class="btn", data-action="bea", onClick="toggleDevice('p', true)").
+		Start Pump
+	button(class="btn", data-action="bea", onClick="toggleDevice('s', false)").
+		Stop all
+
+	div(class="large" id="log")
+	script(type="text/javascript", src="executor.js") 
+	script(src='//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js')

@@ -18,7 +18,7 @@ class WeatherReportBase(object):
     def get_watering_response(self, input):
         resp = WateringResponse()
         if (self.can_handle):
-            resp = self.handle_query(time)
+            resp = self.handle_query(input)
         if resp.should_water and self.successor is not None:
             return self.successor.get_watering_response(input)
         else:

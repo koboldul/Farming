@@ -29,7 +29,7 @@ class WeatherReportCurrent(WeatherReportBase):
 					weather_code >= WeatherReportBase.RAIN_CODES[0] and \
 					float(rain_volume) > float(PrivateData.RAIN_TRASHOLD):
 				resp.rainedAt = datetime.datetime.now()
-                        resp.should_water = False
+				resp.should_water = False
 				self.logger.log('Skip watering because of the rain. Raining right now.')
 		except Exception as e:
 			self.logger.log('Will water because of error: {0}'.format(str(e)))

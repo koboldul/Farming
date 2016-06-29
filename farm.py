@@ -16,7 +16,7 @@ GPIO.setmode(GPIO.BCM)
 
 _notifier = Notifier()
 _currentWeatherReporter = WeatherReportCurrent(None, _notifier)
-_weatherReporter = WeatherReporterHistorical(_currentWeatherReporter, _notifier)
+_weatherReporter = WeatherReportHistorical(_currentWeatherReporter, _notifier)
 
 pump = Device(17, 'pump', _notifier)
 valve = Device(4, 'irrigation valve', _notifier, weather_dependent=True)
@@ -46,7 +46,7 @@ def start_device(device):
     global rainedAt
     
     if device.weather_dependent:
-		waterDecision = weatherReport.get_watering_response(rainedAt)
+		waterDecision = w_currentWeatherReporter.get_watering_response(rainedAt)
 		if waterDecision.should_water:
 			device.start_device()
 		else:
@@ -73,7 +73,7 @@ except Exception as e:
 
 try:
 	while(True):
-		time.sleep(900)
+		sleep(30)
 		_notifier.log('Checking the weather..')
 		waterDecision = _currentWeatherReporter.get_watering_response([])
 		rainedAt = shift(rainedAt, waterDecision.rainedAt)

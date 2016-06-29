@@ -74,8 +74,9 @@ except Exception as e:
 try:
 	while(True):
 		sleep(30)
-		_notifier.log('Checking the weather..')
 		waterDecision = _currentWeatherReporter.get_watering_response([])
+		if waterDecision.rainedAt is not None:
+			_notifier.log('Rained at {0}'.format(waterDecision.rainedAt)
 		rainedAt = shift(rainedAt, waterDecision.rainedAt)
 
 finally:

@@ -16,7 +16,6 @@ class WeatherReportCurrent(WeatherReportBase):
 
 	def handle_query(self, time):
 		resp = WateringResponse()
-		self.logger.log("Checking current weather")
         	try:
 			response = requests.get(self.url)
 			w_data = response.json()

@@ -20,16 +20,23 @@ class WeatherReportCurrent(WeatherReportBase):
 			response = requests.get(self.url)
 			w_data = response.json()
 			#Check if it is raining
-               		if WeatherReportBase.RAIN_TAG not in w_data:
-				return resp	
-			rain_volume = w_data[WeatherReportBase.RAIN_TAG]['3h'] 
-			weather_code = int(w_data[WeatherReportBase.WEATHER_TAG])	
-			if weather_code <= WeatherReportBase.RAIN_CODES[1] and \
-					weather_code >= WeatherReportBase.RAIN_CODES[0] and \
-					float(rain_volume) > float(PrivateData.RAIN_TRASHOLD):
+			weather_code = int(w_data[WeatherReportBase.WEATHER_TAG][0]['id'])	
+               		itRained = False
+			if WeatherReportBase.RAIN_TAG  in w_data and  '3h' in w_data[WeatherReportBase.RAIN_TAG]:
+				rain_volume = float(w_data[WeatherReportBase.RAIN_TAG]['3h']) 
+				if rain_volume > PrivateData.RAIN_TRASHOLD:
+					itRained = True	
+			else:
+				if weather_code<= WeatherReportBase.RAIN_CODES[1] and \
+		        		weather_code >= WeatherReportBase.RAIN_CODES[0] and \
+					weather_code not in WeatherReportBase.NOT_ENOUGH_RAIN :
+					itRained = True
+			if itRained:
+				self.logger.log(str(w_data))
 				resp.rainedAt = datetime.datetime.now()
 				resp.should_water = False
-				self.logger.log('Skip watering because of the rain. Raining right now.')
+				self.logger.log('Raining right now. {0}'.format(datetime.datetime.now()))
 		except Exception as e:
-			self.logger.log('Will water because of error: {0}'.format(str(e)))
+			self.logger.log('Error getting the current weather: {0}'.format(str(e)))
+
 		return resp

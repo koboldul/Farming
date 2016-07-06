@@ -2,6 +2,11 @@ import json
 import requests
 import datetime
 import abc
+#import ctypes
+
+#libc = ctypes.cdll.LoadLibrary('libc.so.6')
+#res_init = libc.__res_init
+
 from watering_response import WateringResponse
 
 class WeatherReportBase(object):
@@ -9,7 +14,8 @@ class WeatherReportBase(object):
     
     RAIN_TAG = 'rain'
     WEATHER_TAG = 'weather'
-    RAIN_CODES=[200, 531]
+    RAIN_CODES=[201, 531]	
+    NOT_ENOUGH_RAIN=[200,300,500]	
 
     def __init__(self, successor, logger):
         self.successor = successor
@@ -17,7 +23,8 @@ class WeatherReportBase(object):
 
     def get_watering_response(self, input):
         resp = WateringResponse()
-        if (self.can_handle):
+#	res_init()
+	if (self.can_handle):
             resp = self.handle_query(input)
         if resp.should_water and self.successor is not None:
             return self.successor.get_watering_response(input)

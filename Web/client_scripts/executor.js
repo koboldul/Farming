@@ -7,7 +7,7 @@ var viewLogs = function(){
 };
 
 var toggleDevice = function(d, isStart){
-	let data = {};
+	var data = {};
 	data.device = d;
 	data.isStart = isStart;
 	$.ajax({

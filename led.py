@@ -5,12 +5,12 @@ import datetime
 
 from time import sleep
 
-from mailer import Mailer
+from notifier import Notifier
 
 #init stuff
 
 GPIO.setmode(GPIO.BCM)
-mailer = Mailer()
+mailer = Notifier()
 
 pump = 17
 valve = 4
@@ -19,7 +19,7 @@ rainDetectedAt = None
 
 pumpTime = 24000
 valveTime = 5000
-
+hasIrrigation = False
 def startDevice(pin):
 	global pump
 	global valve
@@ -30,7 +30,7 @@ def startDevice(pin):
 		p = pump
 	print('Starting device ' + str(p))
 	global mailer	
-	mailer.sendStartStopMessage(True, pin)
+	mailer.log('Start device {0}'.format(pin))
 	
 	try:
 		GPIO.setup(p,GPIO.OUT)
@@ -49,10 +49,7 @@ def checkIrrigation(pin):
 
 def stopDevice(pin):
 	global mailer
-	mailer.sendStartStopMessage(False, pin)
 	GPIO.output(pin, GPIO.HIGH)
-
-hasIrrigation = False
 
 if sys.argv[1] == 's':
 	GPIO.setup(pump, GPIO.OUT)

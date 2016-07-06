@@ -14,12 +14,17 @@ class WeatherReportHistorical(WeatherReportBase):
 
 	def handle_query(self, input):
 		resp = WateringResponse()
-		idx = [i for i, v in enumerate(input) if v is not None]
-	        idx = idx[len(idx)-1]+1 if len(idx) > 0 else -1
-        	if idx >= 0:
-            		lastRain = input[idx]
-			passedSinceLastRain = (datetime.datetime.now()-input[idx]).total_minutes() 
-		if passedSinceLastRain < 360:
-                	resp.should_water = False
+		try:
+			idx = [i for i, v in enumerate(input) if v is not None]
+	        	idx = idx[len(idx)-1]+1 if len(idx) > 0 else -1
+        		if idx >= 0:
+            			lastRain = input[idx]
+				passedSinceLastRain = (datetime.datetime.now()-input[idx]).total_minutes() 
+			if passedSinceLastRain < 360:
+                		self.logger.notify('Rained in the last 6 h', 'Not watering because rained')
+				resp.should_water = False
                 
-		return resp
+			return resp
+		except Exception as e:
+			self.logger.log('ERROR: {0}'.format(e))
+			return resp

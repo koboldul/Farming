@@ -24,8 +24,8 @@ sprinkler1 = Device(1, 'sprinkler front house', _notifier, weather_dependent=Tru
 
 pump.add_device_time(9,0,18,30)
 pump.add_device_time(22,0,4,0)
-valve.add_device_time(7,0,7,30)
-valve.add_device_time(21,30,22,00)
+valve.add_device_time(7,40,8,0)
+valve.add_device_time(21,40,22,00)
 
 rainedAt = []
 #utility functions
@@ -46,7 +46,7 @@ def start_device(device):
     global rainedAt
     
     if device.weather_dependent:
-		waterDecision = w_currentWeatherReporter.get_watering_response(rainedAt)
+		waterDecision = _currentWeatherReporter.get_watering_response(rainedAt)
 		if waterDecision.should_water:
 			device.start_device()
 		else:
@@ -73,10 +73,10 @@ except Exception as e:
 
 try:
 	while(True):
-		sleep(30)
+		sleep(1800)
 		waterDecision = _currentWeatherReporter.get_watering_response([])
 		if waterDecision.rainedAt is not None:
-			_notifier.log('Rained at {0}'.format(waterDecision.rainedAt)
+			_notifier.log('Rained at {0}'.format(waterDecision.rainedAt))
 		rainedAt = shift(rainedAt, waterDecision.rainedAt)
 
 finally:
